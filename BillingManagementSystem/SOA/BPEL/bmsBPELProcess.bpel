@@ -16,7 +16,7 @@
                xmlns:ora="http://schemas.oracle.com/xpath/extension"
                xmlns:bpel="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
          xmlns:ns1="http://soahost.co.ke/SOATutorial/BillingManagementSystem/bmsInterface"
-         xmlns:bpelx="http://schemas.oracle.com/bpel/extension">
+         xmlns:bpelx="http://schemas.oracle.com/bpel/extension" xmlns:ui="http://xmlns.oracle.com/soa/designer">
 
   <!-- 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -25,6 +25,9 @@
      services integrated within this business process                  
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
   -->
+  <import namespace="http://soahost.co.ke/SOATutorial/BillingManagementSystem/bmsInterface"
+          location="../WSDLs/bmsInterfaceWrapper.wsdl" importType="http://schemas.xmlsoap.org/wsdl/"
+          ui:processWSDL="true"/>
   <partnerLinks>
     <partnerLink name="bmsSOAPService" partnerLinkType="ns1:bmsSOAPService" partnerRole="bmsCallbackAsyncPortType"
                  myRole="bmsRequestAsyncPortType"/>
