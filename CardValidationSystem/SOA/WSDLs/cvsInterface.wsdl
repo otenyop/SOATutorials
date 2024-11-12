@@ -1,0 +1,27 @@
+<?xml version= '1.0' encoding= 'UTF-8' ?>
+<wsdl:definitions
+     name="cvsInterface"
+     targetNamespace="http://soahost.co.ke/SOATutorial/CardValidationSystem/cvsInterface"
+     xmlns:tns="http://soahost.co.ke/SOATutorial/CardValidationSystem/cvsInterface"
+     xmlns:inp1="http://soahost.co.ke/SOATutorial/CardValidationSystem/cvsSchema"
+     xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"
+    >
+    <wsdl:types>
+        <xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+            <xsd:import namespace="http://soahost.co.ke/SOATutorial/CardValidationSystem/cvsSchema"
+                 schemaLocation="../Schemas/cvsSchema.xsd"/>
+        </xsd:schema>
+    </wsdl:types>
+    <wsdl:message name="requestMessage">
+        <wsdl:part name="cvsRequestMessagePart" element="inp1:cvsRequest"/>
+    </wsdl:message>
+    <wsdl:message name="responseMessage">
+        <wsdl:part name="cvsResponseMessagePart" element="inp1:cvsResponse"/>
+    </wsdl:message>
+    <wsdl:portType name="cvsSyncPortType">
+        <wsdl:operation name="cvsSyncOperation">
+            <wsdl:input message="tns:requestMessage"/>
+            <wsdl:output message="tns:responseMessage"/>
+        </wsdl:operation>
+    </wsdl:portType>
+</wsdl:definitions>
