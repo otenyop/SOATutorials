@@ -16,7 +16,18 @@
                xmlns:ora="http://schemas.oracle.com/xpath/extension"
                xmlns:bpel="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
          xmlns:ns1="http://soahost.co.ke/SOATutorial/CardValidationSystem/cvsInterface"
-         xmlns:bpelx="http://schemas.oracle.com/bpel/extension">
+         xmlns:bpelx="http://schemas.oracle.com/bpel/extension"
+         xmlns:ns2="http://soahost.co.ke/SOATutorial/CardValidationSystem/cvsSchema"
+         xmlns:xp20="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.Xpath20"
+         xmlns:bpws="http://schemas.xmlsoap.org/ws/2003/03/business-process/"
+         xmlns:oraext="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.ExtFunc"
+         xmlns:dvm="http://www.oracle.com/XSL/Transform/java/oracle.tip.dvm.LookupValue"
+         xmlns:hwf="http://xmlns.oracle.com/bpel/workflow/xpath"
+         xmlns:ids="http://xmlns.oracle.com/bpel/services/IdentityService/xpath"
+         xmlns:bpm="http://xmlns.oracle.com/bpmn20/extensions" xmlns:ess="http://xmlns.oracle.com/scheduler"
+         xmlns:xdk="http://schemas.oracle.com/bpel/extension/xpath/function/xdk"
+         xmlns:xref="http://www.oracle.com/XSL/Transform/java/oracle.tip.xref.xpath.XRefXPathFunctions"
+         xmlns:ldap="http://schemas.oracle.com/xpath/extension/ldap">
 
   <!-- 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -35,6 +46,20 @@
   <sequence name="main">
     <receive name="cvsRequestReceive" createInstance="yes" partnerLink="cvsSOAPService" portType="ns1:cvsSyncPortType"
              operation="cvsSyncOperation" variable="cvsRequestInputVariable"/>
+    <assign name="cvsCommonAssign">
+      <copy>
+        <from>$cvsRequestInputVariable.cvsRequestMessagePart/ns2:cardID</from>
+        <to>$cvsResponseOutputVariable.cvsResponseMessagePart/ns2:cardID</to>
+      </copy>
+      <copy>
+        <from>$cvsRequestInputVariable.cvsRequestMessagePart/ns2:vendorName</from>
+        <to>$cvsResponseOutputVariable.cvsResponseMessagePart/ns2:vendorName</to>
+      </copy>
+      <copy>
+        <from>"UNTESTED"</from>
+        <to>$cvsResponseOutputVariable.cvsResponseMessagePart/ns2:cardStatus</to>
+      </copy>
+    </assign>
     <reply name="cvsResponseReply" variable="cvsResponseOutputVariable" partnerLink="cvsSOAPService"
            portType="ns1:cvsSyncPortType" operation="cvsSyncOperation"/>
   </sequence>
