@@ -1,0 +1,16 @@
+<?xml version= '1.0' encoding= 'UTF-8' ?>
+<wsdl:definitions
+     name="cvsInterface"
+     targetNamespace="http://soahost.co.ke/SOATutorial/CardValidationSystem/cvsInterface"
+     xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+     xmlns:bpws="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+     xmlns:plnk="http://docs.oasis-open.org/wsbpel/2.0/plnktype"
+     xmlns:tns="http://soahost.co.ke/SOATutorial/CardValidationSystem/cvsInterface"
+     xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"
+    >
+    <plnk:partnerLinkType name="cvsSOAPService">
+        <plnk:role name="cvsSyncPortType" portType="tns:cvsSyncPortType"/>
+    </plnk:partnerLinkType>
+    <wsdl:import namespace="http://soahost.co.ke/SOATutorial/CardValidationSystem/cvsInterface"
+         location="cvsInterface.wsdl"/>
+</wsdl:definitions>
