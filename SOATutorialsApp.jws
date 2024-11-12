@@ -24,7 +24,6 @@
    </list>
    <list n="listOfChildren">
       <hash><url n="URL" path="ArithmeticService/ArithmeticService.jpr"/></hash>
-      <hash><url n="URL" path="CardValidationSystem/CardValidationSystem.jpr"/></hash>
       <hash><url n="URL" path="HelloWorldPrj/HelloWorldPrj.jpr"/></hash>
    </list>
 </jws:workspace>
