@@ -1,0 +1,13 @@
+<?xml version = '1.0' encoding = 'UTF-8'?>
+<Faults>
+   <Fault>
+      <severity>warning</severity>
+      <loc/>
+      <line>29</line>
+      <col/>
+      <file>BPEL/arithmeticBPEL.bpel</file>
+      <name>BPEL/arithmeticBPEL.bpel</name>
+      <fix>Fix the process to be *either* durable or synchronous.</fix>
+      <msg>Process "arithmeticBPEL" is both durable (onMessage,Receive,Wait) and synchronous.</msg>
+   </Fault>
+</Faults>
