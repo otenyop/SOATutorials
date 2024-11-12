@@ -9,5 +9,6 @@
         <!-- Add project modules -->
     	<module>HelloWorldPrj</module>
     	<module>ArithmeticService</module>
+    	<module>BillingManagementSystem</module>
     </modules>
 </project>
