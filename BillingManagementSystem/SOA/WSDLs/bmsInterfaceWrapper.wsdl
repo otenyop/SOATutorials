@@ -13,5 +13,5 @@
         <plnk:role name="bmsCallbackAsyncPortType" portType="tns:bmsCallbackAsyncPortType"/>
     </plnk:partnerLinkType>
     <wsdl:import namespace="http://soahost.co.ke/SOATutorial/BillingManagementSystem/bmsInterface"
-         location="bmsInterface.wsdl"/>
+         location="oramds:/apps/BillingManagementSystem/WSDLs/bmsInterface.wsdl"/>
 </wsdl:definitions>

@@ -10,5 +10,6 @@
     	<module>HelloWorldPrj</module>
     	<module>ArithmeticService</module>
     	<module>BillingManagementSystem</module>
+    	<module>DesignTimeMDS</module>
     </modules>
 </project>
