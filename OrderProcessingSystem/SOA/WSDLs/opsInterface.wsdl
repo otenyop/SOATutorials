@@ -1,0 +1,31 @@
+<?xml version= '1.0' encoding= 'UTF-8' ?>
+<wsdl:definitions
+     name="opsInterface"
+     targetNamespace="http://soahost.co.ke/SOATutorial/OrderProcessingSystem/opsInterface"
+     xmlns:tns="http://soahost.co.ke/SOATutorial/OrderProcessingSystem/opsInterface"
+     xmlns:inp1="http://soahost.co.ke/SOATutorial/OrderProcessingSystem/opsSchema"
+     xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"
+    >
+    <wsdl:types>
+        <xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+            <xsd:import namespace="http://soahost.co.ke/SOATutorial/OrderProcessingSystem/opsSchema"
+                 schemaLocation="../Schemas/opsSchema.xsd"/>
+        </xsd:schema>
+    </wsdl:types>
+    <wsdl:message name="requestMessage">
+        <wsdl:part name="opsRequestAsyncMessagePart" element="inp1:opsRequest"/>
+    </wsdl:message>
+    <wsdl:message name="callbackMessage">
+        <wsdl:part name="opsCallbackAsyncMessagePart" element="inp1:opsResponse"/>
+    </wsdl:message>
+    <wsdl:portType name="opsRequestAsyncPortType">
+        <wsdl:operation name="opsRequestAsyncOperation">
+            <wsdl:input message="tns:requestMessage"/>
+        </wsdl:operation>
+    </wsdl:portType>
+    <wsdl:portType name="opsCallbackAsyncPortType">
+        <wsdl:operation name="opsCallbackOperation">
+            <wsdl:input message="tns:callbackMessage"/>
+        </wsdl:operation>
+    </wsdl:portType>
+</wsdl:definitions>
