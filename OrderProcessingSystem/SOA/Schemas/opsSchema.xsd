@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="windows-1252" ?>
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+            xmlns="http://soahost.co.ke/SOATutorial/OrderProcessingSystem/opsSchema"
+            targetNamespace="http://soahost.co.ke/SOATutorial/OrderProcessingSystem/opsSchema"
+            elementFormDefault="qualified">
+  <xsd:element name="opsRequest">
+    <xsd:complexType>
+      <xsd:sequence>
+        <xsd:element name="orderID" type="xsd:integer"/>
+        <xsd:element name="customerInfo">
+          <xsd:complexType>
+            <xsd:sequence>
+              <xsd:element name="customerID" type="xsd:integer"/>
+              <xsd:element name="customerName" type="xsd:string"/>
+            </xsd:sequence>
+          </xsd:complexType>
+        </xsd:element>
+        <xsd:element name="cardInfo">
+          <xsd:complexType>
+            <xsd:sequence>
+              <xsd:element name="cardNumber" type="xsd:integer"/>
+              <xsd:element name="cardVendor" type="xsd:string"/>
+            </xsd:sequence>
+          </xsd:complexType>
+        </xsd:element>
+        <xsd:element name="lineItem" minOccurs="0" maxOccurs="unbounded">
+          <xsd:complexType>
+            <xsd:sequence>
+              <xsd:element name="itemID" type="xsd:integer"/>
+              <xsd:element name="itemName" type="xsd:string"/>
+              <xsd:element name="itemCost" type="xsd:integer"/>
+            </xsd:sequence>
+          </xsd:complexType>
+        </xsd:element>
+      </xsd:sequence>
+    </xsd:complexType>
+  </xsd:element>
+  <xsd:element name="opsResponse">
+    <xsd:annotation>
+      <xsd:documentation>A sample element</xsd:documentation>
+    </xsd:annotation>
+    <xsd:complexType>
+      <xsd:sequence>
+        <xsd:element name="orderID" type="xsd:integer"/>
+        <xsd:element name="cardValidationStatus" type="xsd:string"/>
+        <xsd:element name="orderTotalCost" type="xsd:integer"/>
+        <xsd:element name="orderStatus" type="xsd:string"/>
+      </xsd:sequence>
+    </xsd:complexType>
+  </xsd:element>
+</xsd:schema>
