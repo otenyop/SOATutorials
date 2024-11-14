@@ -1,0 +1,110 @@
+<?xml version = "1.0" encoding = "UTF-8" ?>
+<!--
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+  Oracle JDeveloper BPEL Designer 
+  
+  Created: Thu Nov 14 16:09:33 EAT 2024
+  Author:  PhilipOtenyo
+  Type: BPEL 2.0 Process
+  Purpose: Empty BPEL Process
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+-->
+<process name="opsBPELProcess"
+               targetNamespace="http://soahost.co.ke/SOATutorial/OrderProcessingSystem/opsBPELProcess"
+               xmlns="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+               xmlns:client="http://soahost.co.ke/SOATutorial/OrderProcessingSystem/opsBPELProcess"
+               xmlns:ora="http://schemas.oracle.com/xpath/extension"
+               xmlns:bpel="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+         xmlns:ns1="http://soahost.co.ke/SOATutorial/OrderProcessingSystem/opsInterface"
+         xmlns:bpelx="http://schemas.oracle.com/bpel/extension"
+         xmlns:ns2="http://soahost.co.ke/SOATutorial/CardValidationSystem/cvsInterface"
+         xmlns:ui="http://xmlns.oracle.com/soa/designer"
+         xmlns:ns4="http://soahost.co.ke/SOATutorial/CardValidationSystem/cvsSchema"
+         xmlns:ns3="http://soahost.co.ke/SOATutorial/OrderProcessingSystem/opsSchema"
+         xmlns:xp20="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.Xpath20"
+         xmlns:bpws="http://schemas.xmlsoap.org/ws/2003/03/business-process/"
+         xmlns:oraext="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.ExtFunc"
+         xmlns:dvm="http://www.oracle.com/XSL/Transform/java/oracle.tip.dvm.LookupValue"
+         xmlns:hwf="http://xmlns.oracle.com/bpel/workflow/xpath"
+         xmlns:ids="http://xmlns.oracle.com/bpel/services/IdentityService/xpath"
+         xmlns:bpm="http://xmlns.oracle.com/bpmn20/extensions" xmlns:ess="http://xmlns.oracle.com/scheduler"
+         xmlns:xdk="http://schemas.oracle.com/bpel/extension/xpath/function/xdk"
+         xmlns:xref="http://www.oracle.com/XSL/Transform/java/oracle.tip.xref.xpath.XRefXPathFunctions"
+         xmlns:ldap="http://schemas.oracle.com/xpath/extension/ldap">
+
+  <!-- 
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+     ORCHESTRATION LOGIC                                               
+     Set of activities coordinating the flow of messages across the    
+     services integrated within this business process                  
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+  -->
+  <import namespace="http://soahost.co.ke/SOATutorial/OrderProcessingSystem/opsInterface"
+          location="../WSDLs/opsInterfaceWrapper.wsdl" importType="http://schemas.xmlsoap.org/wsdl/"
+          ui:processWSDL="true"/>
+  <partnerLinks>
+    <partnerLink name="opsSOAPService" partnerLinkType="ns1:opsSOAPService" partnerRole="opsCallbackAsyncPortType"
+                 myRole="opsRequestAsyncPortType"/>
+    <partnerLink name="opsCardValidationSystemPReference" partnerLinkType="ns2:opsCardValidationSystemPReference"
+                 partnerRole="cvsSyncPortType"/>
+  </partnerLinks>
+  <variables>
+    <variable name="opsRequestReceiveInputVariable" messageType="ns1:requestMessage"/>
+    <variable name="opsCallbackInvokeInputVariable" messageType="ns1:callbackMessage"/>
+  </variables>
+  <sequence name="main">
+    <receive name="opsRequestReceive" createInstance="yes" partnerLink="opsSOAPService"
+             portType="ns1:opsRequestAsyncPortType" operation="opsRequestAsyncOperation"
+             variable="opsRequestReceiveInputVariable"/>
+    <scope name="opsCardValidationSystemScope">
+      <variables>
+        <variable name="opsCardValidationSystemInvokeInputVariable" messageType="ns2:requestMessage"/>
+        <variable name="opsCardValidationSystemInvokeOutputVariable" messageType="ns2:responseMessage"/>
+      </variables>
+      <sequence name="Sequence1">
+        <assign name="opsToCvsVariablesAssign">
+          <copy>
+            <from>$opsRequestReceiveInputVariable.opsRequestAsyncMessagePart/ns3:cardInfo/ns3:cardNumber</from>
+            <to>$opsCardValidationSystemInvokeInputVariable.cvsRequestMessagePart/ns4:cardID</to>
+          </copy>
+          <copy>
+            <from>$opsRequestReceiveInputVariable.opsRequestAsyncMessagePart/ns3:cardInfo/ns3:cardVendor</from>
+            <to>$opsCardValidationSystemInvokeInputVariable.cvsRequestMessagePart/ns4:vendorName</to>
+          </copy>
+        </assign>
+        <invoke name="opsCardValidationSystemInvoke" partnerLink="opsCardValidationSystemPReference"
+                portType="ns2:cvsSyncPortType" operation="cvsSyncOperation"
+                inputVariable="opsCardValidationSystemInvokeInputVariable"
+                outputVariable="opsCardValidationSystemInvokeOutputVariable" bpelx:invokeAsDetail="no"/>
+        <assign name="opsLocalToGlobalVarAssign">
+          <copy>
+            <from>$opsCardValidationSystemInvokeOutputVariable.cvsResponseMessagePart/ns4:cardStatus</from>
+            <to>$opsCallbackInvokeInputVariable.opsCallbackAsyncMessagePart/ns3:cardValidationStatus</to>
+          </copy>
+        </assign>
+      </sequence>
+    </scope>
+    <if name="If1">
+      <documentation>
+        <![CDATA[VALID CARD]]>
+      </documentation>
+      <condition>$opsCallbackInvokeInputVariable.opsCallbackAsyncMessagePart/ns3:cardValidationStatus = 'VALID'</condition>
+      <empty name="Empty1"/>
+      <elseif>
+        <documentation>
+          <![CDATA[INVALID CARD]]>
+        </documentation>
+        <condition>$opsCallbackInvokeInputVariable.opsCallbackAsyncMessagePart/ns3:cardValidationStatus = 'INVALID'</condition>
+        <assign name="opsCardIsInvalidAssign">
+          <copy>
+            <from>"Not able to Process Order. Provide Valid Card..."</from>
+            <to>$opsCallbackInvokeInputVariable.opsCallbackAsyncMessagePart/ns3:orderStatus</to>
+          </copy>
+        </assign>
+      </elseif>
+    </if>
+    <invoke name="opsCallbackInvoke" partnerLink="opsSOAPService"
+            portType="ns1:opsCallbackAsyncPortType" operation="opsCallbackAsyncOperation"
+            inputVariable="opsCallbackInvokeInputVariable" bpelx:invokeAsDetail="no"/>
+  </sequence>
+</process>

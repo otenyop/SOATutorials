@@ -24,7 +24,7 @@
         </wsdl:operation>
     </wsdl:portType>
     <wsdl:portType name="opsCallbackAsyncPortType">
-        <wsdl:operation name="opsCallbackOperation">
+        <wsdl:operation name="opsCallbackAsyncOperation">
             <wsdl:input message="tns:callbackMessage"/>
         </wsdl:operation>
     </wsdl:portType>

@@ -11,6 +11,55 @@
            xmlns:orawsp="http://schemas.oracle.com/ws/2006/01/policy"
            xmlns:ui="http://xmlns.oracle.com/soa/designer/"
            xmlns:sca-ext="http://xmlns.oracle.com/sca/1.0-ext">
+  <import namespace="http://soahost.co.ke/SOATutorial/OrderProcessingSystem/opsInterface"
+          location="WSDLs/opsInterface.wsdl" importType="wsdl"/>
+  <import namespace="http://soahost.co.ke/SOATutorial/OrderProcessingSystem/opsInterface"
+          location="WSDLs/opsInterfaceWrapper.wsdl" importType="wsdl"/>
+  <import namespace="http://soahost.co.ke/SOATutorial/CardValidationSystem/cvsInterface"
+          location="http://172.16.75.131:7101/soa-infra/services/default/CardValidationSystem/cvsSOAPService?WSDL"
+          importType="wsdl"/>
+  <import namespace="http://soahost.co.ke/SOATutorial/CardValidationSystem/cvsInterface"
+          location="WSDLs/cvsInterfaceWrapper.wsdl" importType="wsdl"/>
+  <service name="opsSOAPService" ui:wsdlLocation="WSDLs/opsInterface.wsdl">
+    <interface.wsdl interface="http://soahost.co.ke/SOATutorial/OrderProcessingSystem/opsInterface#wsdl.interface(opsRequestAsyncPortType)"
+                    callbackInterface="http://soahost.co.ke/SOATutorial/OrderProcessingSystem/opsInterface#wsdl.interface(opsCallbackAsyncPortType)"/>
+    <binding.ws port="http://soahost.co.ke/SOATutorial/OrderProcessingSystem/opsInterface#wsdl.endpoint(opsSOAPService/opsRequestAsyncPort)">
+      <property name="weblogic.wsee.wsat.transaction.flowOption" type="xs:string" many="false">NEVER</property>
+    </binding.ws>
+    <callback>
+      <binding.ws port="http://soahost.co.ke/SOATutorial/OrderProcessingSystem/opsInterface#wsdl.endpoint(opsSOAPService/opsCallbackAsyncPort)"/>
+    </callback>
+  </service>
   <property name="productVersion" type="xs:string" many="false">12.1.3.0.0</property>
   <property name="compositeID" type="xs:string" many="false">e121e31b-f70e-4459-aeb4-9e3d5a88a268</property>
+  <component name="opsBPELProcess" version="2.0">
+    <implementation.bpel src="BPEL/opsBPELProcess.bpel"/>
+    <componentType>
+      <service name="opsSOAPService" ui:wsdlLocation="WSDLs/opsInterfaceWrapper.wsdl">
+        <interface.wsdl interface="http://soahost.co.ke/SOATutorial/OrderProcessingSystem/opsInterface#wsdl.interface(opsRequestAsyncPortType)"
+                        callbackInterface="http://soahost.co.ke/SOATutorial/OrderProcessingSystem/opsInterface#wsdl.interface(opsCallbackAsyncPortType)"/>
+      </service>
+      <reference name="opsCardValidationSystemPReference" ui:wsdlLocation="WSDLs/cvsInterfaceWrapper.wsdl">
+        <interface.wsdl interface="http://soahost.co.ke/SOATutorial/CardValidationSystem/cvsInterface#wsdl.interface(cvsSyncPortType)"/>
+      </reference>
+    </componentType>
+    <property name="bpel.config.oneWayDeliveryPolicy" type="xs:string" many="false">async.persist</property>
+  </component>
+  <reference name="opsCardValidationSystemPReference"
+             ui:wsdlLocation="http://172.16.75.131:7101/soa-infra/services/default/CardValidationSystem/cvsSOAPService?WSDL">
+    <interface.wsdl interface="http://soahost.co.ke/SOATutorial/CardValidationSystem/cvsInterface#wsdl.interface(cvsSyncPortType)"/>
+    <binding.ws port="http://soahost.co.ke/SOATutorial/CardValidationSystem/cvsInterface#wsdl.endpoint(cvsSOAPService/cvsSyncPort)"
+                location="http://172.16.75.131:7101/soa-infra/services/default/CardValidationSystem/cvsSOAPService?WSDL"
+                soapVersion="1.1">
+      <property name="weblogic.wsee.wsat.transaction.flowOption" type="xs:string" many="false">WSDLDriven</property>
+    </binding.ws>
+  </reference>
+  <wire>
+    <source.uri>opsSOAPService</source.uri>
+    <target.uri>opsBPELProcess/opsSOAPService</target.uri>
+  </wire>
+  <wire>
+    <source.uri>opsBPELProcess/opsCardValidationSystemPReference</source.uri>
+    <target.uri>opsCardValidationSystemPReference</target.uri>
+  </wire>
 </composite>
