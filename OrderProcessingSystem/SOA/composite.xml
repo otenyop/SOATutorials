@@ -11,6 +11,34 @@
            xmlns:orawsp="http://schemas.oracle.com/ws/2006/01/policy"
            xmlns:ui="http://xmlns.oracle.com/soa/designer/"
            xmlns:sca-ext="http://xmlns.oracle.com/sca/1.0-ext">
+  <import namespace="http://soahost.co.ke/SOATutorial/OrderProcessingSystem/opsInterface"
+          location="WSDLs/opsInterface.wsdl" importType="wsdl"/>
+  <import namespace="http://soahost.co.ke/SOATutorial/OrderProcessingSystem/opsInterface"
+          location="WSDLs/opsInterfaceWrapper.wsdl" importType="wsdl"/>
+  <service name="opsAsyncSOAPService" ui:wsdlLocation="WSDLs/opsInterface.wsdl">
+    <interface.wsdl interface="http://soahost.co.ke/SOATutorial/OrderProcessingSystem/opsInterface#wsdl.interface(opsRequestAsyncPortType)"
+                    callbackInterface="http://soahost.co.ke/SOATutorial/OrderProcessingSystem/opsInterface#wsdl.interface(opsCallbackAsyncPortType)"/>
+    <binding.ws port="http://soahost.co.ke/SOATutorial/OrderProcessingSystem/opsInterface#wsdl.endpoint(opsAsyncSOAPService/opsRequestAsyncPort)">
+      <property name="weblogic.wsee.wsat.transaction.flowOption" type="xs:string" many="false">NEVER</property>
+    </binding.ws>
+    <callback>
+      <binding.ws port="http://soahost.co.ke/SOATutorial/OrderProcessingSystem/opsInterface#wsdl.endpoint(opsAsyncSOAPService/opsCallbackAsyncPort)"/>
+    </callback>
+  </service>
   <property name="productVersion" type="xs:string" many="false">12.1.3.0.0</property>
   <property name="compositeID" type="xs:string" many="false">e121e31b-f70e-4459-aeb4-9e3d5a88a268</property>
+  <component name="opsBPELProcess" version="2.0">
+    <implementation.bpel src="BPEL/opsBPELProcess.bpel"/>
+    <componentType>
+      <service name="opsAsyncSOAPService" ui:wsdlLocation="WSDLs/opsInterfaceWrapper.wsdl">
+        <interface.wsdl interface="http://soahost.co.ke/SOATutorial/OrderProcessingSystem/opsInterface#wsdl.interface(opsRequestAsyncPortType)"
+                        callbackInterface="http://soahost.co.ke/SOATutorial/OrderProcessingSystem/opsInterface#wsdl.interface(opsCallbackAsyncPortType)"/>
+      </service>
+    </componentType>
+    <property name="bpel.config.oneWayDeliveryPolicy" type="xs:string" many="false">async.persist</property>
+  </component>
+  <wire>
+    <source.uri>opsAsyncSOAPService</source.uri>
+    <target.uri>opsBPELProcess/opsAsyncSOAPService</target.uri>
+  </wire>
 </composite>
